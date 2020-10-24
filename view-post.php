@@ -1,5 +1,10 @@
 <?php
 include('config.php');
+
+use voku\helper\AntiXSS;
+
+require_once __DIR__ . '/vendor/autoload.php';
+
 if(isset($_POST['pid']))
 {
 	$p=$_POST['pid'];
@@ -16,11 +21,14 @@ if(isset($_POST['comment']))
 	{
 
 		$com= $_POST['com'];
-		$mail= $_POST['email'];
+        $antiXss = new AntiXSS();
+        $harmless_com = $antiXss->xss_clean($com);
+
+        $mail= $_POST['email'];
 		$p=$_POST['pid'];
 
 
-					$sql = "insert into comments (content,author,date,Post_ID) values ('$com','$mail',now(),'$p')";
+					$sql = "insert into comments (content,author,date,Post_ID) values ('$harmless_com','$mail',now(),'$p')";
  
  if(mysqli_query($db, $sql)){
  echo "Comment Added!";
